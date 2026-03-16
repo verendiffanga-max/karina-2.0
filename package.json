@@ -1,11 +1,16 @@
 {
-"name": "musicbot",
-"version": "1.0.0",
-"main": "index.js",
-"type": "module",
-"dependencies": {
-"discord.js": "^14.14.1",
-"@discordjs/voice": "^0.16.0",
-"play-dl": "^1.9.7"
-}
+  "name": "discord-music-bot",
+  "version": "1.0.0",
+  "description": "Simple Discord Music Bot",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "@discordjs/voice": "^0.16.0",
+    "play-dl": "^1.9.7",
+    "ffmpeg-static": "^5.2.0"
+  }
 }
