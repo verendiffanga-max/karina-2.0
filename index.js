@@ -7,7 +7,7 @@ const app = express();
 app.get('/', (req, res) => res.send('Bot Veren Aktif di Railway!'));
 app.listen(process.env.PORT || 3000);
 
-const TOKEN = "MTQ4MzE0MTQwODA3NTQxOTc0OA.GbhrEX.tU8w0XblPN13dtPy16mBNr7nRC9ta5bVnN5AzE";
+const TOKEN = "MTQ4MzE0MTQwODA3NTQxOTc0OA.G3EhQh.m8ZgoR6yKRhQcRYe_7yzGrT7DTQsn1Q3-a4z90";
 const CLIENT_ID = "1483141408075419748";
 
 const client = new Client({
