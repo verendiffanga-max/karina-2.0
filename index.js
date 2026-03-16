@@ -10,7 +10,7 @@ app.listen(process.env.PORT || 3000);
 
 // PENTING: TOKEN diambil dari Environment Variable agar tidak terbaca publik di GitHub
 const TOKEN = process.env.TOKEN; 
-const CLIENT_ID = "1245887261686632468";
+const CLIENT_ID = "1483141408075419748";
 
 const client = new Client({
   intents: [
