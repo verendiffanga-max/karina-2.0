@@ -3,38 +3,64 @@ import { joinVoiceChannel, createAudioPlayer, createAudioResource } from "@disco
 import play from "play-dl";
 
 const client = new Client({
- intents: [GatewayIntentBits.Guilds]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildVoiceStates
+  ]
 });
 
 client.once("ready", () => {
- console.log("Bot music online");
+  console.log("Bot music online");
 });
 
-client.on("interactionCreate", async interaction => {
- if (!interaction.isChatInputCommand()) return;
+client.on("messageCreate", async (message) => {
 
- if (interaction.commandName === "play") {
+  if (message.author.bot) return;
 
-   const url = interaction.options.getString("url");
-   const voice = interaction.member.voice.channel;
+  if (message.content.startsWith("!play")) {
 
-   if (!voice) {
-     interaction.reply("Masuk voice channel dulu");
-     return;
-   }
+    const args = message.content.split(" ");
+    const url = args[1];
 
-   const connection = joinVoiceChannel({
-     channelId: voice.id,
-     guildId: interaction.guild.id,
-     adapterCreator: interaction.guild.voiceAdapterCreator
-   });
+    if (!url) {
+      return message.reply("Masukkan link lagu!");
+    }
 
-   const stream = await play.stream(url);
+    const voiceChannel = message.member.voice.channel;
 
-   const resource = createAudioResource(stream.stream, {
-     inputType: stream.type
-   });
+    if (!voiceChannel) {
+      return message.reply("Masuk voice channel dulu!");
+    }
 
+    const connection = joinVoiceChannel({
+      channelId: voiceChannel.id,
+      guildId: voiceChannel.guild.id,
+      adapterCreator: voiceChannel.guild.voiceAdapterCreator
+    });
+
+    const stream = await play.stream(url);
+
+    const resource = createAudioResource(stream.stream, {
+      inputType: stream.type
+    });
+
+    const player = createAudioPlayer();
+
+    connection.subscribe(player);
+    player.play(resource);
+
+    message.reply("🎵 Memutar lagu...");
+  }
+
+  if (message.content === "!leave") {
+    message.guild.members.me.voice.disconnect();
+  }
+
+});
+
+client.login(process.env.TOKEN);
    const player = createAudioPlayer();
 
    connection.subscribe(player);
