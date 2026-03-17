@@ -4,6 +4,7 @@ const { SoundCloudPlugin } = require('@distube/soundcloud');
 const { YtDlpPlugin } = require('@distube/yt-dlp');
 const express = require('express');
 
+// Supaya Railway tidak mati (Health Check)
 const app = express();
 app.get('/', (req, res) => res.send('Bot Veren Aktif!'));
 app.listen(process.env.PORT || 3000);
@@ -14,12 +15,12 @@ const CLIENT_ID = "1483141408075419748";
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds, 
-    GatewayIntentBits.GuildVoiceStates, 
-    GatewayIntentBits.GuildMessages
+    GatewayIntentBits.GuildVoiceStates, // WAJIB: Supaya bot bisa masuk Voice
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent   // Supaya bot bisa baca perintah
   ]
 });
 
-// SUDAH DIPERBAIKI: leaveOnEmpty dihapus karena bikin error di v5
 const distube = new DisTube(client, {
   emitNewSongOnly: true,
   plugins: [new SoundCloudPlugin(), new YtDlpPlugin()]
@@ -57,7 +58,8 @@ client.on('interactionCreate', async interaction => {
       await distube.play(vc, options.getString('lagu'), { textChannel: channel, member: member });
       await interaction.deleteReply().catch(() => {});
     } catch (err) {
-      await interaction.editReply('❌ Gagal muter lagu. Coba judul lain.');
+      console.log(err);
+      await interaction.editReply('❌ Gagal muter lagu. Cek izin bot.');
     }
   }
   if (commandName === 'skip') {
