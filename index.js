@@ -12,12 +12,16 @@ const TOKEN = process.env.TOKEN;
 const CLIENT_ID = "1483141408075419748";
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildMessages]
+  intents: [
+    GatewayIntentBits.Guilds, 
+    GatewayIntentBits.GuildVoiceStates, 
+    GatewayIntentBits.GuildMessages
+  ]
 });
 
+// SUDAH DIPERBAIKI: leaveOnEmpty dihapus karena bikin error di v5
 const distube = new DisTube(client, {
   emitNewSongOnly: true,
-  leaveOnEmpty: false,
   plugins: [new SoundCloudPlugin(), new YtDlpPlugin()]
 });
 
@@ -33,8 +37,12 @@ const commands = [
 const rest = new REST({ version: '10' }).setToken(TOKEN);
 
 client.once('ready', async () => {
-  await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
-  console.log('✅ BOT FINAL ONLINE DI RAILWAY!');
+  try {
+    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
+    console.log('✅ BOT FINAL ONLINE DI RAILWAY!');
+  } catch (err) {
+    console.error('Gagal daftar command:', err);
+  }
 });
 
 client.on('interactionCreate', async interaction => {
@@ -49,7 +57,6 @@ client.on('interactionCreate', async interaction => {
       await distube.play(vc, options.getString('lagu'), { textChannel: channel, member: member });
       await interaction.deleteReply().catch(() => {});
     } catch (err) {
-      console.error(err);
       await interaction.editReply('❌ Gagal muter lagu. Coba judul lain.');
     }
   }
@@ -63,7 +70,10 @@ client.on('interactionCreate', async interaction => {
 });
 
 distube.on("playSong", (queue, song) => {
-  queue.textChannel.send({ embeds: [new EmbedBuilder().setColor('#ff5500').setTitle('🎶 Memutar').setDescription(`**${song.name}**`)] });
+  queue.textChannel.send({ 
+    embeds: [new EmbedBuilder().setColor('#ff5500').setTitle('🎶 Memutar').setDescription(`**${song.name}**`)] 
+  });
 });
 
 client.login(TOKEN);
+  
